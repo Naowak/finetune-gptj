@@ -16,9 +16,9 @@ while True:
         continue
 
     text = (
-        "=== QUESTION ===\n",
-        question + '\n',
-        '=== REPONSE ===\n',
+        "=== QUESTION ===\n"
+        f"{question}\n"
+        "=== REPONSE ===\n"
     )
     ids = tokenizer(text, return_tensors="pt").input_ids.to("cuda")
 
