@@ -15,7 +15,7 @@ print(f"{args.model} loaded !")
 
 # Define constants
 MAX_LENGTH = 1024
-GEN_LENGTH = 8
+GEN_LENGTH = 512
 CONTEXT_LENGTH = MAX_LENGTH - GEN_LENGTH
 
 # Run 
@@ -44,7 +44,7 @@ while True:
     print("Overton réfléchis...\n\n")
     
     # Generate until <|endoftext|> in sequence
-    while not "<|endoftext|>" in text:
+    while True:
 
         res_tokens = model.generate(
             ids,
