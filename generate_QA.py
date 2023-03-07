@@ -37,24 +37,26 @@ while True:
 
         # Generate 16 tokens
         ids = tokenizer(text, return_tensors="pt").input_ids.to("cuda")
-        if ids.shape[1] > 1024:
-            ids = ids[-1024:]
+        if ids.shape[1] > 1023:
+            ids = ids[-1023:]
 
-        length = 16 + ids.shape[1]
+        length = 1 + ids.shape[1]
 
         gen_tokens = model.generate(
             ids,
-            do_sample=True,
+            temperature=0.7, # The more the temperature is, the more the outputs will be random (0 to 1+)
+            top_p=0.95, # Sum of probability to take into account (the most likelihood words) (0 to 1)
+            top_k=40, # Length of the set of words to pick in (the most likelihood words) (1 to 50+)
+            rep=0.25, # Penalty the model has to generate repetition (0 to 1 : 0 is no penalty)
             max_length=length,
-            temperature=0.9,
-            top_p=0.95,
+            do_sample=True,
             use_cache=True,
             pad_token_id=tokenizer.eos_token_id
         )
 
         # Retrieve generated text and print it
         gen_text = tokenizer.batch_decode(gen_tokens)[0]
-        print(gen_text[len(text):])
+        print(gen_text[len(text):], end='')
 
         # Update text
         text = gen_text
