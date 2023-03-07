@@ -23,8 +23,7 @@ while True:
     
     # Construct text var
     text = (
-        "La réponse doit répondre à la question. La réponse doit être précise, argumentée, et doit suivre un cheminement logique.\n"
-        "Si la question est ambigüe, ou ne traite pas de sujets politiques ou sociétaux, la réponse doit être \"Désolé, je suis un modèle spécialisé sur les sujets politiques et sociétaux, je ne peux pas répondre à cette question.\"\n"
+        "La réponse doit précise, argumentée, logique et véridique."
         "=== QUESTION ===\n"
         f"{question}\n"
         "=== REPONSE ===\n"
@@ -53,7 +52,7 @@ while True:
             top_p=0.95, # Sum of probability to take into account (the most likelihood words) (0 to 1)
             top_k=40, # Length of the set of words to pick in (the most likelihood words) (1 to 50+)
             rep=0.25, # Penalty the model has to generate repetition (0 to 1 : 0 is no penalty)
-            max_length=MAX_GEN_LENGTH,
+            max_length=MAX_CONTEXT_LENGTH + MAX_GEN_LENGTH,
             do_sample=True,
             use_cache=True,
             pad_token_id=tokenizer.eos_token_id
@@ -61,9 +60,10 @@ while True:
 
         # Retrieve generated text and print it
         gen_text = tokenizer.batch_decode(gen_tokens)[0]
-        for c in gen_text:
+        new_text = gen_text[len(text):]
+        for i in range(len(new_text)):
             time.sleep(0.001)
-            print(c, end='')
+            print(new_text[i], end='')
 
         # Update text
         text = gen_text
