@@ -15,8 +15,6 @@ print(f"{args.model} loaded !")
 
 # Define constants
 MAX_LENGTH = 1024
-GEN_LENGTH = 512
-CONTEXT_LENGTH = MAX_LENGTH - GEN_LENGTH
 
 # Run 
 while True:
@@ -36,44 +34,22 @@ while True:
 
     # Retrieve tokens
     ids = tokenizer(text, return_tensors="pt").input_ids.to("cuda")
-    if ids.shape[1] > CONTEXT_LENGTH :
-        ids = ids[:,-CONTEXT_LENGTH:]
 
-    # Print
-    flag = False
-    print("Overton réfléchis...\n\n")
+    # Generate    
+    res_tokens = model.generate(
+        ids,
+        temperature=0.8, # The more the temperature is, the more the outputs will be random (0 to 1+)
+        top_p=0.95, # Sum of probability to take into account (the most likelihood words) (0 to 1)
+        #top_k=50, # Length of the set of words to pick in (the most likelihood words) (1 to 50+)
+        #rep=0.25, # Penalty the model has to generate repetition (0 to 1 : 0 is no penalty)
+        max_length=MAX_LENGTH,
+        do_sample=True,
+        use_cache=True,
+        pad_token_id=tokenizer.eos_token_id
+    )
+
+    # Print result
+    gen_text = tokenizer.batch_decode(res_tokens)[0]
+    print(gen_text)
+
     
-    # Generate until <|endoftext|> in sequence
-    while True:
-
-        res_tokens = model.generate(
-            ids,
-            temperature=0.8, # The more the temperature is, the more the outputs will be random (0 to 1+)
-            top_p=0.95, # Sum of probability to take into account (the most likelihood words) (0 to 1)
-            #top_k=50, # Length of the set of words to pick in (the most likelihood words) (1 to 50+)
-            #rep=0.25, # Penalty the model has to generate repetition (0 to 1 : 0 is no penalty)
-            max_length=MAX_LENGTH,
-            do_sample=True,
-            use_cache=True,
-            pad_token_id=tokenizer.eos_token_id
-        )
-
-        # Print beginning of answer
-        if not flag:
-            print('Réponse :\n')
-            flag = True
-
-        # Retrieve gen tokens
-        gen_tokens = res_tokens[:,-GEN_LENGTH:]
-
-        # Retrieve generated text and print it
-        gen_text = tokenizer.batch_decode(gen_tokens)[0]
-        print(gen_text)
-
-        if "<|endoftext|>" in gen_text:
-            break
-
-        # Update ids
-        ids = ids.cat([ids, gen_tokens], dim=1)[:,-CONTEXT_LENGTH:]
-
-
