@@ -67,7 +67,7 @@ while True:
         gen_tokens = res_tokens[:,-GEN_LENGTH:]
 
         # Retrieve generated text and print it
-        gen_text = tokenizer.batch_decode()[0]
+        gen_text = tokenizer.batch_decode(gen_tokens)[0]
         print(gen_text, flush=True, end='\n')
 
         if "<|endoftext|>" in gen_text:
