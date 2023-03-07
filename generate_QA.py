@@ -15,6 +15,8 @@ print(f"{args.model} loaded !")
 
 # Define constants
 MAX_LENGTH = 1024
+GEN_LENGTH = 100
+CONTEXT_LENGTH = MAX_LENGTH - GEN_LENGTH
 
 # Run 
 while True:
@@ -33,7 +35,8 @@ while True:
     )
 
     # Retrieve tokens
-    ids = tokenizer(text, return_tensors="pt").input_ids.to("cuda")
+    ids = tokenizer(text, return_tensors="pt").input_ids.to("cuda")[:,-CONTEXT_LENGTH:]
+    max_length = ids.shape[1] + GEN_LENGTH
 
     # Generate    
     res_tokens = model.generate(
@@ -42,7 +45,7 @@ while True:
         top_p=0.95, # Sum of probability to take into account (the most likelihood words) (0 to 1)
         #top_k=50, # Length of the set of words to pick in (the most likelihood words) (1 to 50+)
         #rep=0.25, # Penalty the model has to generate repetition (0 to 1 : 0 is no penalty)
-        max_length=MAX_LENGTH,
+        max_length=max_length,
         do_sample=True,
         use_cache=True,
         pad_token_id=tokenizer.eos_token_id
