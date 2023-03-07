@@ -37,6 +37,9 @@ while True:
 
         # Generate 16 tokens
         ids = tokenizer(text, return_tensors="pt").input_ids.to("cuda")
+        if ids.shape[1] > 1024:
+            ids = ids[-1024:]
+
         length = 16 + ids.shape[1]
 
         gen_tokens = model.generate(
@@ -46,6 +49,7 @@ while True:
             temperature=0.9,
             top_p=0.95,
             use_cache=True,
+            pad_token_id=tokenizer.eos_token_id
         )
 
         # Retrieve generated text and print it
