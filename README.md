@@ -27,4 +27,4 @@ Distributed under the MIT License with an Acknowledgment Clause. See `LICENSE` f
 
 Yannis Bendi-Ouis - [https://www.naowak.fr](https://www.naowak.fr/)
 
-Github : [https://www.github.com/Naowak]
+Github : https://www.github.com/Naowak
